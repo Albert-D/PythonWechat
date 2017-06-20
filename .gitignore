@@ -2,3 +2,7 @@
 Cache/*
 *.pyo
 Revocation/*
+*.jpg
+*.mp3
+*.mp4
+*.gif
