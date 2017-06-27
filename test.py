@@ -120,13 +120,17 @@ class Revocation:
         revoke_msg_id = None
 
         if msg['Type'] == 'Note':
-            if re.search(r"\!\[CDATA\[.*撤回了一条消息\]\]", msg['Content']):
-                if re.search("\<msgid\>(.*?)\<\/msgid\>", msg['Content']):
-                    revoke_msg_id = re.search("\<msgid\>(.*?)\<\/msgid\>", msg['Content']).group(1)
+            #加入繁体和英文的支持：
+            if re.search(r"!\[CDATA\[.*撤回了一条消息\]\]", msg['Content'])or\
+                re.search(r"!\[CDATA\[.*已回收一條訊息\]\]", msg['Content'])or\
+                re.search(r"!\[CDATA\[.*has recalled a message.\]\]", msg['Content']):
+                if re.search(r"<msgid>(.*?)</msgid>", msg['Content']):
+                    revoke_msg_id = re.search(r"<msgid>(.*?)</msgid>", msg['Content']).group(1) #获取子组里面的数字
                 elif re.search("\;msgid\&gt\;(.*?)\&lt", msg['Content']):
                     revoke_msg_id = re.search("\;msgid\&gt\;(.*?)\&lt", msg['Content']).group(1)
 
-            print("收到撤回消息，Msg_id=", revoke_msg_id) #debug
+            if revoke_msg_id != None:
+                print("收到撤回消息，Msg_id=", revoke_msg_id) #debug
             return revoke_msg_id
 
     def SendRevokeMsg(self, msg):
